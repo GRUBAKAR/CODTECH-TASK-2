@@ -1,0 +1,75 @@
+# Define a class for the Student Grade Tracker
+class StudentGradeTracker:
+    def __init__(self, student_name, student_id, class_name):
+        self.student_name = student_name
+        self.student_id = student_id
+        self.class_name = class_name
+        self.subjects = {}
+    
+    # Add a subject to the student's grade tracker
+    def add_subject(self, subject_name, grading_weights):
+        """ grading_weights should be a dictionary like {'Homework': 0.2, 'Quizzes': 0.3, 'Exams': 0.5} """
+        self.subjects[subject_name] = {
+            "grades": {"Homework": [], "Quizzes": [], "Exams": []},
+            "weights": grading_weights
+        }
+    
+    # Add a grade to a specific subject
+    def add_grade(self, subject_name, assessment_type, grade):
+        """ Add grade for a specific assessment type like Homework, Quizzes, Exams """
+        if subject_name in self.subjects and assessment_type in self.subjects[subject_name]['grades']:
+            self.subjects[subject_name]['grades'][assessment_type].append(grade)
+        else:
+            print(f"Error: {subject_name} or {assessment_type} does not exist.")
+    
+    # Calculate the average grade for a specific assessment type
+    def calculate_average(self, grades):
+        return sum(grades) / len(grades) if grades else 0
+
+    # Calculate the final grade for a subject based on the weighted average
+    def calculate_final_grade(self, subject_name):
+        if subject_name not in self.subjects:
+            return None
+
+        subject_info = self.subjects[subject_name]
+        grades = subject_info["grades"]
+        weights = subject_info["weights"]
+        
+        final_grade = 0
+        for assessment_type, weight in weights.items():
+            average_grade = self.calculate_average(grades[assessment_type])
+            final_grade += average_grade * weight
+        
+        return final_grade
+    
+    # Display student's grades and final result
+    def display_grades(self):
+        print(f"Student Name: {self.student_name}, ID: {self.student_id}, Class: {self.class_name}\n")
+        for subject, details in self.subjects.items():
+            print(f"Subject: {subject}")
+            for assessment_type, grades in details['grades'].items():
+                print(f"  {assessment_type}: {grades} | Average: {self.calculate_average(grades):.2f}")
+            final_grade = self.calculate_final_grade(subject)
+            print(f"  Final Grade: {final_grade:.2f}\n")
+
+
+# Example Usage
+# Create a student grade tracker for a student
+student = StudentGradeTracker("John Doe", "12345", "10th Grade")
+
+# Add subjects with grading weights
+student.add_subject("Mathematics", {"Homework": 0.2, "Quizzes": 0.3, "Exams": 0.5})
+student.add_subject("English", {"Homework": 0.3, "Quizzes": 0.2, "Exams": 0.5})
+
+# Add grades for Mathematics
+student.add_grade("Mathematics", "Homework", 85)
+student.add_grade("Mathematics", "Quizzes", 90)
+student.add_grade("Mathematics", "Exams", 88)
+
+# Add grades for English
+student.add_grade("English", "Homework", 78)
+student.add_grade("English", "Quizzes", 85)
+student.add_grade("English", "Exams", 80)
+
+# Display all grades and final results
+student.display_grades()
